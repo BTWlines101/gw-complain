@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>고객커뮤니케이션 스킬</title>
+<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after {
+  box-sizing: border-box; margin: 0; padding: 0;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-font-smoothing: antialiased;
+}
+:root {
+  --bg: #F2F4F8;
+  --white: #FFFFFF;
+  --border: #E2E6EF;
+  --text1: #0D1117;
+  --text2: #6B7380;
+  --text3: #AAB0BE;
+  --royal: #1A3FAA;
+  --royal-light: #2651CC;
+
+  --ca: #E8645A; --ca-dark: #C44840; --ca-pastel: #FDECEA;
+  --cb: #3B6EF0; --cb-dark: #2A55CC; --cb-pastel: #EAF0FE;
+  --cc: #8B4CF7; --cc-dark: #6E34D4; --cc-pastel: #F2ECFE;
+  --cd: #18B07A; --cd-dark: #108A5E; --cd-pastel: #E5F8F2;
+  --ce: #F0A020; --ce-dark: #C07A10; --ce-pastel: #FEF6E5;
+  --cf: #F06840; --cf-dark: #C04A28; --cf-pastel: #FEF0EB;
+}
+
+html, body {
+  height: 100%; height: 100dvh;
+  overflow: hidden;
+  font-family: 'Pretendard', -apple-system, 'Apple SD Gothic Neo', sans-serif;
+  background: var(--bg);
+  color: var(--text1);
+}
+
+.screen {
+  display: none;
+  height: 100dvh;
+  flex-direction: column;
+  overflow: hidden;
+}
+.screen.active { display: flex; }
+
+/* ── HEADER ── */
+.hdr {
+  background: linear-gradient(135deg, var(--royal) 0%, var(--royal-light) 100%);
+  padding: 11px 16px 10px;
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.hdr-brand { display: flex; flex-direction: column; gap: 1px; }
+.hdr-brand-name { font-size: 10px; font-weight: 900; letter-spacing: 2.5px; color: rgba(255,255,255,0.55); text-transform: uppercase; }
+.hdr-brand-sub { font-size: 8px; color: rgba(255,255,255,0.35); letter-spacing: 0.3px; }
+.hdr-title { font-size: 13px; font-weight: 800; color: #fff; letter-spacing: -0.3px; text-align: right; }
+
+/* progress */
+.prog-wrap { height: 3px; background: rgba(26,63,170,0.3); flex-shrink: 0; }
+.prog-fill {
+  height: 3px;
+  background: rgba(255,255,255,0.8);
+  border-radius: 0 2px 2px 0;
+  transition: width 0.4s cubic-bezier(0.34,1.4,0.64,1);
+  width: 0%;
+}
+
+/* ── CARD BANK ── */
+.bank {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 9px 12px 10px;
+  flex-shrink: 0;
+}
+.eyebrow {
+  font-size: 8.5px; font-weight: 800; letter-spacing: 2px;
+  color: var(--text3); text-transform: uppercase; margin-bottom: 7px;
+}
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+.c-card {
+  border-radius: 10px;
+  padding: 8px 9px;
+  display: flex; align-items: center; gap: 7px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.14s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s;
+  border: none;
+  /* 모든 카드 동일 높이 고정 */
+  min-height: 52px;
+}
+.c-card:active:not(.used) { transform: scale(0.90); }
+.c-card.used { opacity: 0.28; pointer-events: none; }
+.c-card .check-mark {
+  position: absolute; top: 4px; right: 6px;
+  font-size: 9px; color: rgba(255,255,255,0.9);
+  font-weight: 900; opacity: 0;
+  transition: opacity 0.18s;
+}
+.c-card.used .check-mark { opacity: 1; }
+
+.c-alpha {
+  font-size: 16px; font-weight: 900;
+  color: rgba(255,255,255,0.95);
+  flex-shrink: 0; line-height: 1;
+}
+.c-txt {
+  font-size: 10.5px; font-weight: 700;
+  color: rgba(255,255,255,0.95);
+  line-height: 1.3; letter-spacing: -0.1px;
+}
+
+.ca-card { background: linear-gradient(135deg, var(--ca) 0%, var(--ca-dark) 100%); }
+.cb-card { background: linear-gradient(135deg, var(--cb) 0%, var(--cb-dark) 100%); }
+.cc-card { background: linear-gradient(135deg, var(--cc) 0%, var(--cc-dark) 100%); }
+.cd-card { background: linear-gradient(135deg, var(--cd) 0%, var(--cd-dark) 100%); }
+.ce-card { background: linear-gradient(135deg, var(--ce) 0%, var(--ce-dark) 100%); }
+.cf-card { background: linear-gradient(135deg, var(--cf) 0%, var(--cf-dark) 100%); }
+
+/* ── SLOTS ── */
+.slots-wrap {
+  flex: 1; min-height: 0;
+  padding: 8px 12px 6px;
+  display: flex; flex-direction: column;
+}
+.slots-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 6px;
+}
+.slots-count { font-size: 11px; font-weight: 800; color: var(--royal-light); }
+
+.slot-list { flex: 1; display: flex; flex-direction: column; gap: 5px; }
+
+.s-slot {
+  flex: 1;
+  border-radius: 11px;
+  border: 1.5px dashed var(--border);
+  background: var(--white);
+  display: flex; align-items: center; gap: 9px;
+  padding: 0 12px;
+  transition: background 0.25s, border-color 0.25s, box-shadow 0.25s;
+  overflow: hidden;
+  position: relative;
+}
+.s-slot.filled {
+  border-style: solid;
+  border-color: transparent;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.09);
+}
+.s-slot::before {
+  content: '';
+  position: absolute; left: 0; top: 0; bottom: 0;
+  width: 3px; border-radius: 11px 0 0 11px;
+  background: transparent;
+  transition: background 0.25s;
+}
+.s-slot.filled::before { background: var(--slot-color, transparent); }
+
+.s-slot.bump { animation: bump 0.3s cubic-bezier(0.34,1.6,0.64,1); }
+@keyframes bump { 0%,100%{transform:scale(1)} 50%{transform:scale(1.025)} }
+
+/* 번호 배지 — 중립 색상 고정 */
+.s-num {
+  width: 26px; height: 26px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 900;
+  flex-shrink: 0;
+  background: var(--bg);
+  color: var(--text3);
+  /* 색상 변화 없음 — 항상 중립 */
+}
+
+.s-body { flex: 1; display: flex; align-items: center; gap: 7px; overflow: hidden; }
+.s-badge {
+  font-size: 9px; font-weight: 900; letter-spacing: 0.5px;
+  padding: 2px 7px; border-radius: 4px;
+  flex-shrink: 0; opacity: 0;
+  transition: opacity 0.2s;
+  color: white;
+}
+.s-slot.filled .s-badge { opacity: 1; }
+
+.s-name {
+  font-size: 13px; font-weight: 500; color: var(--text3);
+  transition: font-size 0.15s, font-weight 0.15s, color 0.15s;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.s-slot.filled .s-name { font-size: 14px; font-weight: 800; color: var(--text1); }
+
+.s-del {
+  width: 22px; height: 22px; border-radius: 6px;
+  background: rgba(0,0,0,0.05); border: none;
+  color: rgba(0,0,0,0.25); font-size: 10px; font-weight: 800;
+  display: none; align-items: center; justify-content: center;
+  cursor: pointer; flex-shrink: 0; transition: background 0.12s;
+}
+.s-del:active { background: rgba(220,50,40,0.12); color: #C44040; }
+.s-slot.filled .s-del { display: flex; }
+
+/* ── CONFIRM BTN ── */
+.btn-area { padding: 5px 12px 16px; flex-shrink: 0; }
+.btn-confirm {
+  width: 100%; padding: 14px;
+  border: none; border-radius: 13px;
+  font-size: 15px; font-weight: 800; font-family: inherit;
+  cursor: pointer;
+  background: var(--border); color: var(--text3);
+  transition: all 0.32s cubic-bezier(0.34,1.4,0.64,1);
+}
+.btn-confirm.on {
+  background: linear-gradient(135deg, var(--royal) 0%, var(--royal-light) 100%);
+  color: white;
+  box-shadow: 0 6px 22px rgba(26,63,170,0.35);
+}
+.btn-confirm.on:active { transform: scale(0.98); }
+
+/* ══════════════════════════════
+   SCREEN 2 — 결과
+══════════════════════════════ */
+#screen2 { background: var(--bg); }
+
+.r-flow {
+  flex: 1; min-height: 0;
+  padding: 10px 12px 8px;
+  display: flex; flex-direction: column;
+  gap: 5px;
+  overflow: hidden;
+}
+
+.r-item {
+  flex: 1;
+  display: flex; align-items: center; gap: 12px;
+  padding: 0 16px;
+  border-radius: 12px;
+  animation: rIn 0.38s cubic-bezier(0.34,1.4,0.64,1) both;
+}
+@keyframes rIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
+
+/* 알파벳 배지 (큰 것) */
+.r-alpha-badge {
+  width: 40px; height: 40px; border-radius: 12px;
+  background: rgba(0,0,0,0.18);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; font-weight: 900; color: white;
+  flex-shrink: 0;
+}
+
+.r-info { flex: 1; }
+/* 숫자 — 작은 글씨로 위에 */
+.r-info-num {
+  font-size: 9px; font-weight: 800; letter-spacing: 1px;
+  color: rgba(255,255,255,0.6);
+  margin-bottom: 2px;
+}
+.r-info-name {
+  font-size: 16px; font-weight: 800; color: white;
+  letter-spacing: -0.3px; line-height: 1.2;
+}
+
+.r-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.35); flex-shrink: 0; }
+
+.r-footer {
+  padding: 6px 12px 18px;
+  background: var(--white);
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.btn-back {
+  width: 100%; padding: 13px;
+  background: transparent; color: var(--text2);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  font-size: 13px; font-weight: 700; font-family: inherit;
+  cursor: pointer; transition: background 0.15s;
+}
+.btn-back:active { background: var(--bg); }
+</style>
+</head>
+<body>
+
+<!-- ── SCREEN 1 ── -->
+<div id="screen1" class="screen active">
+
+  <div class="hdr">
+    <div class="hdr-brand">
+      <div class="hdr-brand-name">TEAM SCS</div>
+      <div class="hdr-brand-sub">Planning · Process · Problem-Solving</div>
+    </div>
+    <div class="hdr-title">문제상황 고객커뮤니케이션 스킬</div>
+  </div>
+
+  <div class="prog-wrap"><div class="prog-fill" id="progFill"></div></div>
+
+  <div class="bank">
+    <div class="eyebrow">응대 카드</div>
+    <div class="card-grid">
+      <div class="c-card ca-card" data-id="A" onclick="placeCard('A')">
+        <div class="c-alpha">A</div>
+        <div class="c-txt">해결방안·<br>대안제시</div>
+        <div class="check-mark">✓</div>
+      </div>
+      <div class="c-card cb-card" data-id="B" onclick="placeCard('B')">
+        <div class="c-alpha">B</div>
+        <div class="c-txt">사실확인·<br>원인설명</div>
+        <div class="check-mark">✓</div>
+      </div>
+      <div class="c-card cc-card" data-id="C" onclick="placeCard('C')">
+        <div class="c-alpha">C</div>
+        <div class="c-txt">정중한<br>양해표현</div>
+        <div class="check-mark">✓</div>
+      </div>
+      <div class="c-card cd-card" data-id="D" onclick="placeCard('D')">
+        <div class="c-alpha">D</div>
+        <div class="c-txt">고객의견 경청</div>
+        <div class="check-mark">✓</div>
+      </div>
+      <div class="c-card ce-card" data-id="E" onclick="placeCard('E')">
+        <div class="c-alpha">E</div>
+        <div class="c-txt">고객감정 수용</div>
+        <div class="check-mark">✓</div>
+      </div>
+      <div class="c-card cf-card" data-id="F" onclick="placeCard('F')">
+        <div class="c-alpha">F</div>
+        <div class="c-txt">재 양해표현</div>
+        <div class="check-mark">✓</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slots-wrap">
+    <div class="slots-header">
+      <div class="eyebrow" style="margin-bottom:0">나의 순서</div>
+      <div class="slots-count" id="slotsCount">0 / 6</div>
+    </div>
+    <div class="slot-list">
+      <div class="s-slot" id="slot-1"><div class="s-num">1</div><div class="s-body"><div class="s-badge" id="sb-1"></div><div class="s-name" id="sn-1">첫 번째 카드를 선택하세요</div></div><div class="s-del" onclick="removeCard(1)">✕</div></div>
+      <div class="s-slot" id="slot-2"><div class="s-num">2</div><div class="s-body"><div class="s-badge" id="sb-2"></div><div class="s-name" id="sn-2">두 번째 카드를 선택하세요</div></div><div class="s-del" onclick="removeCard(2)">✕</div></div>
+      <div class="s-slot" id="slot-3"><div class="s-num">3</div><div class="s-body"><div class="s-badge" id="sb-3"></div><div class="s-name" id="sn-3">세 번째 카드를 선택하세요</div></div><div class="s-del" onclick="removeCard(3)">✕</div></div>
+      <div class="s-slot" id="slot-4"><div class="s-num">4</div><div class="s-body"><div class="s-badge" id="sb-4"></div><div class="s-name" id="sn-4">네 번째 카드를 선택하세요</div></div><div class="s-del" onclick="removeCard(4)">✕</div></div>
+      <div class="s-slot" id="slot-5"><div class="s-num">5</div><div class="s-body"><div class="s-badge" id="sb-5"></div><div class="s-name" id="sn-5">다섯 번째 카드를 선택하세요</div></div><div class="s-del" onclick="removeCard(5)">✕</div></div>
+      <div class="s-slot" id="slot-6"><div class="s-num">6</div><div class="s-body"><div class="s-badge" id="sb-6"></div><div class="s-name" id="sn-6">여섯 번째 카드를 선택하세요</div></div><div class="s-del" onclick="removeCard(6)">✕</div></div>
+    </div>
+  </div>
+
+  <div class="btn-area">
+    <button class="btn-confirm" id="btnConfirm" onclick="goResult()">순서 확정하기 →</button>
+  </div>
+
+</div>
+
+<!-- ── SCREEN 2 ── -->
+<div id="screen2" class="screen">
+  <div class="hdr">
+    <div class="hdr-brand">
+      <div class="hdr-brand-name">TEAM SCS</div>
+      <div class="hdr-brand-sub">나의 응대 프로세스</div>
+    </div>
+    <div class="hdr-title">문제상황 고객커뮤니케이션 스킬</div>
+  </div>
+
+  <div class="r-flow" id="rFlow"></div>
+
+  <div class="r-footer">
+    <button class="btn-back" onclick="goBack()">← 돌아가서 수정하기</button>
+  </div>
+</div>
+
+<script>
+const CARDS = {
+  A: { text:'해결방안·대안제시', color:'#E8645A', dark:'#C44840', pastel:'#FDECEA' },
+  B: { text:'사실확인·원인설명',  color:'#3B6EF0', dark:'#2A55CC', pastel:'#EAF0FE' },
+  C: { text:'정중한 양해표현',    color:'#8B4CF7', dark:'#6E34D4', pastel:'#F2ECFE' },
+  D: { text:'고객의견 경청',      color:'#18B07A', dark:'#108A5E', pastel:'#E5F8F2' },
+  E: { text:'고객감정 수용',      color:'#F0A020', dark:'#C07A10', pastel:'#FEF6E5' },
+  F: { text:'재 양해표현',        color:'#F06840', dark:'#C04A28', pastel:'#FEF0EB' }
+};
+const PH = ['첫 번째 카드를 선택하세요','두 번째 카드를 선택하세요','세 번째 카드를 선택하세요','네 번째 카드를 선택하세요','다섯 번째 카드를 선택하세요','여섯 번째 카드를 선택하세요'];
+let order = [null,null,null,null,null,null];
+
+function placeCard(id) {
+  if (order.includes(id)) return;
+  const idx = order.indexOf(null);
+  if (idx < 0) return;
+  order[idx] = id;
+  render();
+  const el = document.getElementById('slot-'+(idx+1));
+  el.classList.add('bump');
+  el.addEventListener('animationend', () => el.classList.remove('bump'), {once:true});
+}
+
+function removeCard(n) {
+  if (!order[n-1]) return;
+  order.splice(n-1,1);
+  order.push(null);
+  render();
+}
+
+function render() {
+  const placed = order.filter(Boolean);
+  document.getElementById('progFill').style.width = (placed.length/6*100)+'%';
+  document.getElementById('slotsCount').textContent = placed.length+' / 6';
+
+  Object.keys(CARDS).forEach(id => {
+    document.querySelector('[data-id="'+id+'"]').classList.toggle('used', placed.includes(id));
+  });
+
+  for (let i = 0; i < 6; i++) {
+    const id = order[i];
+    const slot  = document.getElementById('slot-'+(i+1));
+    const badge = document.getElementById('sb-'+(i+1));
+    const name  = document.getElementById('sn-'+(i+1));
+
+    if (id) {
+      const c = CARDS[id];
+      slot.classList.add('filled');
+      slot.style.background = c.pastel;
+      slot.style.setProperty('--slot-color', c.color);
+      slot.style.borderColor = 'transparent';
+      badge.textContent = id;
+      badge.style.background = c.color;
+      name.textContent = c.text;
+    } else {
+      slot.classList.remove('filled');
+      slot.style.background = '';
+      slot.style.borderColor = '';
+      slot.style.removeProperty('--slot-color');
+      badge.textContent = '';
+      name.textContent = PH[i];
+    }
+  }
+
+  const btn = document.getElementById('btnConfirm');
+  btn.classList.toggle('on', placed.length === 6);
+  btn.textContent = placed.length === 6 ? '순서 확정하기 →' : placed.length+' / 6 선택 중…';
+}
+
+function goResult() {
+  const flow = document.getElementById('rFlow');
+  flow.innerHTML = '';
+  order.forEach((id, i) => {
+    const c = CARDS[id];
+    const item = document.createElement('div');
+    item.className = 'r-item';
+    item.style.background = 'linear-gradient(135deg, '+c.color+' 0%, '+c.dark+' 100%)';
+    item.style.animationDelay = (i*0.06)+'s';
+    item.innerHTML =
+      '<div class="r-alpha-badge">'+id+'</div>'+
+      '<div class="r-info">'+
+        '<div class="r-info-num">'+(i+1)+'번째</div>'+
+        '<div class="r-info-name">'+c.text+'</div>'+
+      '</div>'+
+      '<div class="r-dot"></div>';
+    flow.appendChild(item);
+  });
+  document.getElementById('screen1').classList.remove('active');
+  document.getElementById('screen2').classList.add('active');
+}
+
+function goBack() {
+  document.getElementById('screen2').classList.remove('active');
+  document.getElementById('screen1').classList.add('active');
+}
+</script>
+</body>
+</html>
